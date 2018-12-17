@@ -1,2 +1,4 @@
 extra_32x32.mat
 model.pkl
+*.csv
+.venv

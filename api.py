@@ -1,9 +1,10 @@
+import io
 import flask
 from flask import Flask, request, render_template
 from sklearn.externals import joblib
-import numpy as np
-from scipy import misc
-
+#import numpy as np
+#from scipy import misc
+import pandas as pd
 
 app = Flask(__name__)
 
@@ -18,25 +19,37 @@ def make_prediction():
 	if request.method=='POST':
 
 		# get uploaded image file if it exists
-		file = request.files['image']
-		if not file: return render_template('index.html', label="No file")
+		#file = request.files['image']
+		#if not file: return render_template('index.html', label="No file")
 		
 		# read in file as raw pixels values
 		# (ignore extra alpha channel and reshape as its a single image)
-		img = misc.imread(file)
-		img = img[:,:,:3]
-		img = img.reshape(1, -1)
+		#img = misc.imread(file)
+		#img = img[:,:,:3]
+		#img = img.reshape(1, -1)
 
 		# make prediction on new image
-		prediction = model.predict(img)
+		data_file = request.files['dataset']
+		data = data_file.read()
+		dat = pd.read_csv(io.BytesIO(data), encoding='utf-8', sep=",")
+		print("%"*60)
+		print(dat)
+		print("%"*60)
+		print(type(dat))
+		print("-------------")
+		#print(data_file.seek(0))
+
+		prediction = model.predict(dat)
+
+		print("prediction: ",pd.DataFrame(prediction).to_string())
 	
 		# squeeze value from 1D array and convert to string for clean return
-		label = str(np.squeeze(prediction))
+		#label = str(np.squeeze(prediction))
 
 		# switch for case where label=10 and number=0
-		if label=='10': label='0'
+		#if label=='10': label='0'
 
-		return render_template('index.html', label=label)
+		return render_template('index.html', label=pd.DataFrame(prediction).to_string())
 
 
 if __name__ == '__main__':

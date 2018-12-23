@@ -1,9 +1,10 @@
 import io
+
 import flask
 from flask import Flask, request, render_template
-from sklearn.externals import joblib
-#import numpy as np
+
 import pandas as pd
+from sklearn.externals import joblib
 
 app = Flask(__name__)
 
@@ -25,16 +26,15 @@ def make_prediction():
 		prediction = model.predict(dat)
 		prediction_output = pd.DataFrame(prediction).reset_index(drop=False)
 		prediction_output.columns = ["ID", "y_hat"]
-		prediction_output.to_csv("prediction.csv", index=False)
+		prediction_output.to_csv("data/prediction.csv", index=False)
 		print(prediction_output.head())
 
-
-
+		# 3. Render results from prediction method
 		return render_template('index.html', label="Prediction processed. Check folder for results.")
 
 
 if __name__ == '__main__':
 	# load ml model
-	model = joblib.load('model.pkl')
+	model = joblib.load('models/model.pkl')
 	# start api
 	app.run(host='0.0.0.0', port=8000, debug=True)

@@ -40,8 +40,13 @@ def make_prediction():
 		#print(data_file.seek(0))
 
 		prediction = model.predict(dat)
+		prediction_output = pd.DataFrame(prediction).reset_index(drop=False)
+		prediction_output.columns = ["ID", "y_hat"]
+		prediction_output.to_csv("prediction.csv", index=False)
+		print(prediction_output.head())
 
-		print("prediction: ",pd.DataFrame(prediction).to_string())
+
+		#print("prediction: ",pd.DataFrame(prediction).to_string())
 	
 		# squeeze value from 1D array and convert to string for clean return
 		#label = str(np.squeeze(prediction))

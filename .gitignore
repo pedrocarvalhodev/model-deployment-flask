@@ -1,4 +1,9 @@
-extra_32x32.mat
 model.pkl
 *.csv
 .venv
+*.venv
+*.ipynb
+*.ipynb_checkpoints/
+models/*.ipynb_checkpoints/
+models/Untitled.txt
+models/test_pipeline.py

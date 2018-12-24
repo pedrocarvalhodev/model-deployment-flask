@@ -22,11 +22,15 @@ def make_prediction():
 		data = data_file.read()
 		dat = pd.read_csv(io.BytesIO(data), encoding='utf-8', sep=",")
 
+		# 2. Get model
+		model_file = request.files['model']
+		model = joblib.load(model_file)
+
 		# 2. Predict and save results
 		prediction = model.predict(dat)
 		prediction_output = pd.DataFrame(prediction).reset_index(drop=False)
 		prediction_output.columns = ["ID", "y_hat"]
-		prediction_output.to_csv("data/prediction.csv", index=False)
+		prediction_output.to_csv("data//prediction_boston.csv", index=False)
 		print(prediction_output.head())
 
 		# 3. Render results from prediction method
@@ -34,7 +38,7 @@ def make_prediction():
 
 
 if __name__ == '__main__':
-	# load ml model
-	model = joblib.load('models/model.pkl')
-	# start api
+	
+	#model = joblib.load('models/model.pkl')
+	
 	app.run(host='0.0.0.0', port=8000, debug=True)

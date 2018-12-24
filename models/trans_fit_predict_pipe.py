@@ -5,22 +5,20 @@ import pandas as pd
 #import dill as pickle
 
 from sklearn.pipeline import Pipeline
+import sklearn.datasets as datasets
 
 from sklearn.externals import joblib
-from sklearn.model_selection import train_test_split #, GridSearchCV
+from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.base import BaseEstimator, TransformerMixin
-#from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.linear_model import LinearRegression
 
-#rom sklearn.pipeline import make_pipeline
+from sklearn.pipeline import make_pipeline
 
 import warnings
 warnings.filterwarnings("ignore")
 
-X_train.to_csv("/home/pedro/repos/ml_web_api/model-deployment-flask/X_train.csv", index=False)
-X_test.to_csv("/home/pedro/repos/ml_web_api/model-deployment-flask/X_test.csv", index=False)
-y_train.to_csv("/home/pedro/repos/ml_web_api/model-deployment-flask/y_train.csv", index=False)
-y_test.to_csv("/home/pedro/repos/ml_web_api/model-deployment-flask/y_test.csv", index=False)
+path = "/home/pedro/repos/ml_web_api/model-deployment-flask/data/boston_housing/"
 
 
 def build_and_train():
@@ -32,17 +30,64 @@ def build_and_train():
     X = [x for x in data.columns if x != y]
 
     X_train, X_test, y_train, y_test = train_test_split(data[X], data[y], test_size=0.2, random_state=42)
+    
+    y_train = y_train.as_matrix()
+    y_test = y_test.as_matrix()
+    #X_train.to_csv(path+"X_train.csv", index=False)
+    #X_test.to_csv(path+"X_test.csv", index=False)
+    #y_train.to_csv(path+"y_train.csv", index=False)
+    #y_test.to_csv(path+"y_test.csv", index=False)
 
-    pipeline = Pipeline([
-        ('preproc',PreProcessing()),
-        ('clf',DecisionTreeClassifier())
-        ])
+    #pipeline = Pipeline([
+    #    ('tfidf',PreProcessing()),
+    #    ('clf',LinearRegression())
+    #    ])
 
-    pipeline.fit(X_train,y_train)
+    #pipeline.fit(X_train,y_train)
+    #return(pipeline)
 
-	#grid.fit(X_train, y_train)
+    pipe = make_pipeline(PreProcessing(),
+                        RandomForestRegressor())
 
-	return(pipeline)
+    #print("-"*60)
+    #print(pipe.get_params().keys())
+    #print("-"*60)
+    #dict_keys(['memory', 'steps', 'preprocessing', 'randomforestregressor', 
+    #    'randomforestregressor__bootstrap', 'randomforestregressor__criterion', 
+    #    'randomforestregressor__max_depth', 'randomforestregressor__max_features', 
+    #    'randomforestregressor__max_leaf_nodes', 'randomforestregressor__min_impurity_decrease', 
+    #    'randomforestregressor__min_impurity_split', 'randomforestregressor__min_samples_leaf', 
+    #    'randomforestregressor__min_samples_split', 'randomforestregressor__min_weight_fraction_leaf', 
+    #    'randomforestregressor__n_estimators', 'randomforestregressor__n_jobs', 'randomforestregressor__oob_score', 
+    #    'randomforestregressor__random_state', 'randomforestregressor__verbose', 'randomforestregressor__warm_start'])
+
+    
+
+    ## RandomForestClassifier
+    #param_grid = {"randomforestclassifier__n_estimators" : [10, 20, 30],
+    #              "randomforestclassifier__max_depth" : [None, 6, 8, 10],
+    #              "randomforestclassifier__max_leaf_nodes": [None, 5, 10, 20], 
+    #              "randomforestclassifier__min_impurity_split": [0.1, 0.2, 0.3]}
+    #
+    #grid = GridSearchCV(pipe, param_grid=param_grid, cv=3)
+
+    ## RandomForestRegressor
+    param_grid = { 
+            "randomforestregressor__n_estimators"      : [10,200,3000],
+            "randomforestregressor__max_features"      : ["auto", "sqrt", "log2"],
+            "randomforestregressor__min_samples_split" : [2,4,8],
+            "randomforestregressor__bootstrap"         : [True, False],
+           }
+
+
+    #grid = GridSearchCV(pipe, param_grid2)
+
+    grid = GridSearchCV(pipe, param_grid) #, n_jobs=-1, cv=5)
+
+
+    grid.fit(X_train, y_train)
+
+    return(grid)
 
 
 class PreProcessing(BaseEstimator, TransformerMixin):
@@ -66,20 +111,10 @@ class PreProcessing(BaseEstimator, TransformerMixin):
         
         return df.as_matrix()
 
-    #def fit(self, df, y=None, **fit_params):
-    #    """Fitting the Training dataset & calculating the required values from train
-    #       e.g: We will need the mean of X_train['Loan_Amount_Term'] that will be used in
-    #            transformation of X_test
-    #    """
-    #    
-    #    self.term_mean_ = df['Loan_Amount_Term'].mean()
-    #    self.amt_mean_ = df['LoanAmount'].mean()
-    #   return self
+    # just return self
+    def fit(self, X, y=None, **fit_params):
+        return self
 
 if __name__ == '__main__':
-	clf = build_and_train()
-
-	filename = 'pipeline_model.pkl'
-	with open('/models/'+filename, 'wb') as file:
-		#pickle.dump(model, file)
-        joblib.dump(clf, 'model.pkl')
+    clf = build_and_train()
+    joblib.dump(clf, 'pipe_model_boston.pkl')

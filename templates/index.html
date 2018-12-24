@@ -9,9 +9,11 @@
 <body>
 
     <h1>Predictor Web App</h1>
+    <h2>Chose 1. model and 2. data to predict</h2>
 
     <form action="/predict" method="post" enctype="multipart/form-data">
-      <input type="file" accept=".csv" name="dataset" value="Upload">
+      <input type="file" accept=".pkl" name="model" value="Upload model">
+      <input type="file" accept=".csv" name="dataset" value="Upload dataset">
       <input type="submit" value="Predict"> {% if label %} {{ label }} {% endif %}
     </form>
 

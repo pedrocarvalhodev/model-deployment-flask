@@ -109,6 +109,48 @@ X_train.head(2)
 
 
 
+# # test model
+
+# In[41]:
+
+
+import pandas as pd
+from sklearn.externals import joblib
+model = joblib.load('/home/pedro/repos/ml_web_api/model-deployment-flask/models/pipe_model_boston.pkl')
+res = model.predict("/home/pedro/repos/ml_web_api/model-deployment-flask/data/boston_housing/X_test.csv")
+print(res)
+
+
+# In[42]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
+# In[ ]:
+
+
+
+
+
 # In[ ]:
 
 

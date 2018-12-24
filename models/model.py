@@ -31,7 +31,7 @@ y = df[y_col]
 # split data into training and testing sets 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=42)
 
-X_train.to_csv("/home/pedro/repos/ml_web_api/model-deployment-flask/X_train.csv", index=False)
+X_train.to_csv("/home/pedro/repos/ml_web_api/model-deployment-flask/body_mass/X_train.csv", index=False)
 X_test.to_csv("/home/pedro/repos/ml_web_api/model-deployment-flask/X_test.csv", index=False)
 y_train.to_csv("/home/pedro/repos/ml_web_api/model-deployment-flask/y_train.csv", index=False)
 y_test.to_csv("/home/pedro/repos/ml_web_api/model-deployment-flask/y_test.csv", index=False)
